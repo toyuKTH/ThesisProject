@@ -1,0 +1,228 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f5f7fa;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #1a1a1a;
+}
+
+.task-page {
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+.task-header {
+  padding: 30px 48px 24px;
+  background: #f5f7fa;
+  border-bottom: 1px solid #d9dee5;
+}
+
+.task-header-row {
+  display: flex;
+  gap: 24px;
+  font-size: 18px;
+  color: #222;
+  margin-bottom: 18px;
+}
+
+.progress-bar-wrapper {
+  width: 100%;
+  height: 8px;
+  background: #dfe4ea;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: #a4b3bd;
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+.task-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.task-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 170px);
+}
+
+.task-left,
+.task-right {
+  padding: 28px 46px 44px;
+}
+
+.task-left {
+  border-right: 1px solid #d9dee5;
+}
+
+.image-panel {
+  background: #ffffff;
+  border: 1px solid #cfd6dd;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.image-placeholder {
+  width: 100%;
+  aspect-ratio: 1.42 / 1;
+  border-radius: 6px;
+  background: #eef2f6;
+  border: 1px solid #d4dbe2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 18px;
+  overflow: hidden;
+}
+
+.image-placeholder span {
+  padding: 12px;
+  text-align: center;
+}
+
+.image-note {
+  margin: 18px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #5f6770;
+}
+
+.task-label {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.task-right textarea {
+  width: 100%;
+  min-height: 260px;
+  border: 1px solid #8f98a3;
+  border-radius: 12px;
+  padding: 18px;
+  font-size: 16px;
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+  background: #ffffff;
+}
+
+.task-right textarea:focus {
+  border-color: #5d8fc9;
+}
+
+.ai-section {
+  margin-top: 22px;
+}
+
+.secondary-button {
+  min-width: 220px;
+  height: 56px;
+  border: none;
+  border-radius: 12px;
+  background: #d9dde2;
+  color: #4f5660;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.secondary-button:hover:enabled {
+  background: #cfd5db;
+}
+
+.secondary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+
+.ai-once-note {
+  margin: 12px 0 0;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.ai-hint {
+  margin: 14px 0 10px;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.ai-feedback-box {
+  margin-top: 10px;
+  border: 1px solid #8f98a3;
+  border-radius: 12px;
+  background: #f8fafc;
+  padding: 18px 20px;
+}
+
+.ai-feedback-box h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.ai-feedback-text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #222;
+}
+
+.ai-feedback-note {
+  margin: 18px 0 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.task-actions {
+  margin-top: 24px;
+}
+
+.primary-button {
+  width: 100%;
+  height: 60px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #1f73dc, #2f86f0);
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.primary-button:hover {
+  opacity: 0.95;
+}
+
+@media (max-width: 1000px) {
+  .task-main {
+    grid-template-columns: 1fr;
+  }
+
+  .task-left {
+    border-right: none;
+    border-bottom: 1px solid #d9dee5;
+  }
+
+  .task-header,
+  .task-left,
+  .task-right {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}

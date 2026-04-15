@@ -72,20 +72,38 @@ function Participant({ onSubmit }) {
                 <option value="occasionally">Yes, occasionally</option>
                 <option value="no">No</option>
             </select>
-            <button onClick={() => {
-                const formData = {
-                    participantID,
-                    age,
-                    gender,
-                    creationActivity,
-                    postingFrequency,
-                    writingFrequency,
-                    trained,
-                    AIwriting,
-                };
-                onSubmit(formData)
-            }}
-            >Submit</button>
+            <button
+                onClick={() => {
+                    if (
+                        !participantID ||
+                        !age ||
+                        !gender ||
+                        !creationActivity ||
+                        !postingFrequency ||
+                        !writingFrequency ||
+                        !trained ||
+                        !AIwriting
+                    ) {
+                        alert('Please complete all fields before submitting.');
+                        return;
+                    }
+
+                    const formData = {
+                        participantID,
+                        age,
+                        gender,
+                        creationActivity,
+                        postingFrequency,
+                        writingFrequency,
+                        trained,
+                        AIwriting,
+                    };
+
+                    onSubmit(formData);
+                }}
+            >
+                Submit
+            </button>
         </div>
     );
 }

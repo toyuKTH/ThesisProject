@@ -1,31 +1,36 @@
 .welcome-page {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 30px;
-    text-align: center;
-    width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  text-align: center;
+  width: 100%;
+  padding: 24px;
 }
+
 .welcome-page h1 {
-    padding-top: 10%;
-    font-size: 30pt;
-    font-style: italic;
+  font-size: 30pt;
+  font-style: italic;
+  margin: 0;
 }
+
 .welcome-page p {
-    font-size: 12pt;
-    width: 800px; 
-    word-wrap: break-word;
-    text-align: justify;
+  font-size: 12pt;
+  width: 100%;
+  max-width: 800px;
+  word-wrap: break-word;
+  text-align: justify;
+  line-height: 1.7;
 }
+
 .navigate-button {
-  background-color: #4a90e2; 
-  color: white; 
-  border: none; 
-  padding: 12px 24px; 
-  font-size: 16px; 
-  border-radius: 8px; 
-  cursor: pointer; 
-    
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
 }
