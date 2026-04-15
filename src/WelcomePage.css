@@ -1,0 +1,31 @@
+.welcome-page {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    text-align: center;
+    width: 100%;
+}
+.welcome-page h1 {
+    padding-top: 10%;
+    font-size: 30pt;
+    font-style: italic;
+}
+.welcome-page p {
+    font-size: 12pt;
+    width: 800px; 
+    word-wrap: break-word;
+    text-align: justify;
+}
+.navigate-button {
+  background-color: #4a90e2; 
+  color: white; 
+  border: none; 
+  padding: 12px 24px; 
+  font-size: 16px; 
+  border-radius: 8px; 
+  cursor: pointer; 
+    
+}

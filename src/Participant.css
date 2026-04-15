@@ -1,0 +1,97 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f7f7f5;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.participant {
+  max-width: 600px;
+  margin: 60px auto;
+  background: #ffffff;
+  border: 1px solid #e0deda;
+  border-radius: 12px;
+  padding: 40px 44px;
+}
+
+.participant h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 6px;
+}
+
+.participant .subtitle {
+  font-size: 0.875rem;
+  color: #888;
+  margin: 0 0 32px;
+}
+
+.participant h4 {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+  margin: 0 0 8px;
+}
+
+.participant input[type="text"],
+.participant input[type="number"],
+.participant select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  background: #fafaf9;
+  border: 1px solid #ddd;
+  border-radius: 7px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  margin-bottom: 20px;
+  transition: border-color 0.15s ease;
+}
+
+.participant input[type="text"]:focus,
+.participant input[type="number"]:focus,
+.participant select:focus {
+  border-color: #555;
+  background: #fff;
+}
+
+.participant select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+  cursor: pointer;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.participant button {
+  width: 100%;
+  padding: 11px;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #fff;
+  background-color: #2d2d2d;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.participant button:hover {
+  background-color: #111;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #ece9e4;
+  margin: 8px 0 24px;
+}
