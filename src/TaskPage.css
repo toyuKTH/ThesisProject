@@ -82,14 +82,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666;
-  font-size: 18px;
   overflow: hidden;
 }
 
-.image-placeholder span {
-  padding: 12px;
-  text-align: center;
+.task-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 6px;
 }
 
 .image-note {

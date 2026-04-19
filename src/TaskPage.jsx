@@ -12,11 +12,15 @@ function TaskPage({
   const [description, setDescription] = useState('');
   const [aiFeedback, setAiFeedback] = useState('');
   const [hasUsedAI, setHasUsedAI] = useState(false);
+  const [initialDescriptionBeforeAI, setInitialDescriptionBeforeAI] = useState('');
+  const [aiRequestedAt, setAiRequestedAt] = useState(null);
 
   useEffect(() => {
     setDescription('');
     setAiFeedback('');
     setHasUsedAI(false);
+    setInitialDescriptionBeforeAI('');
+    setAiRequestedAt(null);
   }, [task]);
 
   if (!task) {
@@ -24,7 +28,6 @@ function TaskPage({
   }
 
   const progressPercent = ((currentTaskIndex + 1) / totalTasks) * 100;
-  const isLastTask = currentTaskIndex === totalTasks - 1;
   const isAITask = task.condition === 'AI';
 
   const conditionLabel = isAITask
@@ -34,11 +37,18 @@ function TaskPage({
   const handleGetAIFeedback = () => {
     if (hasUsedAI) return;
 
+    if (!description.trim()) {
+      alert('Please write an initial description before getting AI feedback.');
+      return;
+    }
+
     const fakeFeedback =
       'Try to clearly describe the main scene first, then mention important visual details such as the setting, notable objects, and any striking colors or spatial relationships. Focus on what would be most useful for a blind or low vision audience.';
 
+    setInitialDescriptionBeforeAI(description);
     setAiFeedback(fakeFeedback);
     setHasUsedAI(true);
+    setAiRequestedAt(new Date().toISOString());
   };
 
   const handleSubmit = () => {
@@ -57,10 +67,14 @@ function TaskPage({
       taskId: task.id,
       condition: task.condition,
       category: task.category,
+      imageId: task.imageId,
       imageLabel: task.imageLabel,
       responseText: description,
       usedAI: hasUsedAI,
-      aiFeedback: aiFeedback,
+      aiFeedback,
+      initialDescriptionBeforeAI: isAITask ? initialDescriptionBeforeAI : null,
+      finalDescriptionAfterAI: isAITask ? description : null,
+      aiRequestedAt: isAITask ? aiRequestedAt : null,
       timestamp: new Date().toISOString(),
     };
 
@@ -89,7 +103,11 @@ function TaskPage({
         <div className="task-left">
           <div className="image-panel">
             <div className="image-placeholder">
-              <span>{task.imageLabel}</span>
+              <img
+                src={task.imageSrc}
+                alt=""
+                className="task-image"
+              />
             </div>
             <p className="image-note">
               Please focus on describing the image for a blind or low vision audience.
@@ -146,7 +164,7 @@ function TaskPage({
 
           <div className="task-actions">
             <button className="primary-button" onClick={handleSubmit}>
-              {isLastTask ? 'Submit Description' : 'Submit Description'}
+              Submit Description
             </button>
           </div>
         </div>

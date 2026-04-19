@@ -1,21 +1,92 @@
 import WelcomePage from './WelcomePage';
 import TaskPage from './TaskPage';
 import Participant from './Participant';
+import WorkloadPage from './WorkloadPage';
 import { useState } from 'react';
 
-const ALL_TASKS = [
-  { id: 'NP', condition: 'nonAI', category: 'people', imageLabel: 'Person Image A' },
-  { id: 'AO', condition: 'AI', category: 'object', imageLabel: 'Object Image B' },
-  { id: 'NS', condition: 'nonAI', category: 'scene', imageLabel: 'Scene Image A' },
-  { id: 'AP', condition: 'AI', category: 'people', imageLabel: 'Person Image B' },
-  { id: 'NO', condition: 'nonAI', category: 'object', imageLabel: 'Object Image A' },
-  { id: 'AS', condition: 'AI', category: 'scene', imageLabel: 'Scene Image B' },
-];
+import P1 from './assets/images/P1.jpg';
+import P2 from './assets/images/P2.jpg';
+import O1 from './assets/images/O1.jpg';
+import O2 from './assets/images/O2.jpg';
+import S1 from './assets/images/S1.jpg';
+import S2 from './assets/images/S2.jpg';
 
-function getTaskOrder(participantID) {
+const IMAGE_POOL = {
+  people: [
+    { id: 'P1', src: P1 },
+    { id: 'P2', src: P2 },
+  ],
+  object: [
+    { id: 'O1', src: O1 },
+    { id: 'O2', src: O2 },
+  ],
+  scene: [
+    { id: 'S1', src: S1 },
+    { id: 'S2', src: S2 },
+  ],
+};
+
+function shuffleArray(array) {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
+
+function getStartingCondition(participantID) {
   const idNum = Number(participantID) || 0;
-  const shift = idNum % ALL_TASKS.length;
-  return [...ALL_TASKS.slice(shift), ...ALL_TASKS.slice(0, shift)];
+  return idNum % 2 === 1 ? 'AI' : 'nonAI';
+}
+
+function generateTaskOrder(participantID) {
+  const startingCondition = getStartingCondition(participantID);
+
+  const alternatingConditions =
+    startingCondition === 'AI'
+      ? ['AI', 'nonAI', 'AI', 'nonAI', 'AI', 'nonAI']
+      : ['nonAI', 'AI', 'nonAI', 'AI', 'nonAI', 'AI'];
+
+  const aiCategories = shuffleArray(['people', 'object', 'scene']);
+  const nonAiCategories = shuffleArray(['people', 'object', 'scene']);
+
+  const imageAssignment = {};
+
+  ['people', 'object', 'scene'].forEach((category) => {
+    const shuffledImages = shuffleArray(IMAGE_POOL[category]);
+
+    imageAssignment[category] = {
+      AI: shuffledImages[0],
+      nonAI: shuffledImages[1],
+    };
+  });
+
+  let aiIndex = 0;
+  let nonAiIndex = 0;
+
+  const taskOrder = alternatingConditions.map((condition, index) => {
+    const category =
+      condition === 'AI'
+        ? aiCategories[aiIndex++]
+        : nonAiCategories[nonAiIndex++];
+
+    const imageObject = imageAssignment[category][condition];
+    const imageId = imageObject.id;
+    const imageSrc = imageObject.src;
+    const imageLabel = `${category} ${imageId}`;
+
+    return {
+      id: `task-${index + 1}`,
+      condition,
+      category,
+      imageId,
+      imageSrc,
+      imageLabel,
+    };
+  });
+
+  return taskOrder;
 }
 
 function downloadJSON(data, filename = 'study-data.json') {
@@ -42,7 +113,7 @@ function App() {
   });
 
   const handleParticipantSubmit = (formData) => {
-    const generatedTaskOrder = getTaskOrder(formData.participantID);
+    const generatedTaskOrder = generateTaskOrder(formData.participantID);
 
     setStudyData({
       participantInfo: formData,
@@ -56,11 +127,18 @@ function App() {
   };
 
   const handleTaskSubmit = (taskResponse) => {
-    const updatedResponses = [...studyData.taskResponses, taskResponse];
+    setStudyData((prevData) => ({
+      ...prevData,
+      taskResponses: [...prevData.taskResponses, taskResponse],
+    }));
 
+    setCurrentPage('workload');
+  };
+
+  const handleWorkloadSubmit = (workloadResponse) => {
     const updatedStudyData = {
       ...studyData,
-      taskResponses: updatedResponses,
+      workloadResponses: [...studyData.workloadResponses, workloadResponse],
     };
 
     setStudyData(updatedStudyData);
@@ -75,6 +153,7 @@ function App() {
       setCurrentPage('finished');
     } else {
       setCurrentTaskIndex((prev) => prev + 1);
+      setCurrentPage('task');
     }
   };
 
@@ -92,7 +171,7 @@ function App() {
         <Participant onSubmit={handleParticipantSubmit} />
       )}
 
-      {currentPage === 'task' && (
+      {currentPage === 'task' && studyData.taskOrder.length > 0 && (
         <TaskPage
           participantInfo={studyData.participantInfo}
           task={studyData.taskOrder[currentTaskIndex]}
@@ -103,11 +182,26 @@ function App() {
         />
       )}
 
+      {currentPage === 'workload' && studyData.taskOrder.length > 0 && (
+        <WorkloadPage
+          participantInfo={studyData.participantInfo}
+          task={studyData.taskOrder[currentTaskIndex]}
+          currentTaskIndex={currentTaskIndex}
+          totalTasks={studyData.taskOrder.length}
+          onSubmitWorkload={handleWorkloadSubmit}
+        />
+      )}
+
       {currentPage === 'finished' && (
         <div style={{ maxWidth: '720px', margin: '80px auto', padding: '24px' }}>
           <h1>Study Completed</h1>
-          <p>Thank you for participating. Your responses have been downloaded as a JSON file.</p>
-          <button onClick={() => setCurrentPage('welcome')}>Back to Welcome Page</button>
+          <p>
+            Thank you for participating. Your responses have been downloaded as a JSON
+            file.
+          </p>
+          <button onClick={() => setCurrentPage('welcome')}>
+            Back to Welcome Page
+          </button>
         </div>
       )}
     </div>

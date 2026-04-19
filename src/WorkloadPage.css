@@ -1,0 +1,163 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f5f7fa;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #1a1a1a;
+}
+
+.workload-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px 20px;
+  background: #f5f7fa;
+}
+
+.workload-card {
+  width: 100%;
+  max-width: 920px;
+  background: #ffffff;
+  border: 1px solid #d9dee5;
+  border-radius: 16px;
+  padding: 22px 28px 24px;
+}
+
+.workload-header {
+  margin-bottom: 10px;
+}
+
+.workload-step {
+  margin: 0 0 4px;
+  font-size: 13px;
+  color: #66707a;
+}
+
+.workload-header h1 {
+  margin: 0 0 4px;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.workload-subtitle {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #5f6770;
+}
+
+.question-block {
+  padding: 12px 0;
+  border-top: 1px solid #e5e9ee;
+}
+
+.question-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.question-block h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.question-block p {
+  margin: 0 0 8px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #444;
+}
+
+.scale-anchors-inline {
+  display: flex;
+  gap: 14px;
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.scale-row {
+  margin-top: 2px;
+}
+
+.scale-options {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.scale-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 42px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+}
+
+.scale-label input[type='radio'] {
+  transform: scale(1.05);
+  cursor: pointer;
+  margin: 0;
+}
+
+.workload-actions {
+  margin-top: 16px;
+}
+
+.workload-button {
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #1f73dc, #2f86f0);
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.workload-button:hover {
+  opacity: 0.95;
+}
+
+@media (max-width: 760px) {
+  .workload-page {
+    padding: 16px 12px;
+  }
+
+  .workload-card {
+    padding: 18px 16px 20px;
+  }
+
+  .workload-header h1 {
+    font-size: 21px;
+  }
+
+  .question-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .scale-anchors-inline {
+    gap: 10px;
+  }
+
+  .scale-options {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
