@@ -193,15 +193,23 @@ function App() {
       )}
 
       {currentPage === 'finished' && (
-        <div style={{ maxWidth: '720px', margin: '80px auto', padding: '24px' }}>
-          <h1>Study Completed</h1>
-          <p>
-            Thank you for participating. Your responses have been downloaded as a JSON
-            file.
-          </p>
-          <button onClick={() => setCurrentPage('welcome')}>
-            Back to Welcome Page
-          </button>
+        <div className="finished-page">
+          <div className="finished-card">
+            <p className="finished-step">Study completed</p>
+            <h1>Thank you for your participation</h1>
+            <p className="finished-text">
+              Your responses have been downloaded as a JSON file.
+            </p>
+            <p className="finished-text">
+              Please save the file and send it to the researcher as instructed.
+            </p>
+            <button
+              className="finished-button"
+              onClick={() => setCurrentPage('welcome')}
+            >
+              Back to Welcome Page
+            </button>
+          </div>
         </div>
       )}
     </div>

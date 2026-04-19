@@ -87,50 +87,42 @@ function WorkloadPage({
         </div>
 
         <div className="question-block">
-          <div className="question-top">
-            <h3>Mental Demand</h3>
-            <div className="scale-anchors-inline">
-              <span>Very low</span>
-              <span>Very high</span>
-            </div>
-          </div>
+          <h3>Mental Demand</h3>
           <p>How mentally demanding was this task?</p>
+          <div className="scale-anchors">
+            <span>Very low</span>
+            <span>Very high</span>
+          </div>
           {renderScale('mentalDemand', mentalDemand, setMentalDemand)}
         </div>
 
         <div className="question-block">
-          <div className="question-top">
-            <h3>Temporal Demand</h3>
-            <div className="scale-anchors-inline">
-              <span>Very low</span>
-              <span>Very high</span>
-            </div>
-          </div>
+          <h3>Temporal Demand</h3>
           <p>How much time pressure did you feel while doing this task?</p>
+          <div className="scale-anchors">
+            <span>Very low</span>
+            <span>Very high</span>
+          </div>
           {renderScale('temporalDemand', temporalDemand, setTemporalDemand)}
         </div>
 
         <div className="question-block">
-          <div className="question-top">
-            <h3>Effort</h3>
-            <div className="scale-anchors-inline">
-              <span>Very low</span>
-              <span>Very high</span>
-            </div>
-          </div>
+          <h3>Effort</h3>
           <p>How hard did you have to work to complete this task?</p>
+          <div className="scale-anchors">
+            <span>Very low</span>
+            <span>Very high</span>
+          </div>
           {renderScale('effort', effort, setEffort)}
         </div>
 
         <div className="question-block">
-          <div className="question-top">
-            <h3>Frustration</h3>
-            <div className="scale-anchors-inline">
-              <span>Very low</span>
-              <span>Very high</span>
-            </div>
-          </div>
+          <h3>Frustration</h3>
           <p>How frustrated, stressed, or annoyed did you feel during this task?</p>
+          <div className="scale-anchors">
+            <span>Very low</span>
+            <span>Very high</span>
+          </div>
           {renderScale('frustration', frustration, setFrustration)}
         </div>
 
