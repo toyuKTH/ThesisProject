@@ -128,7 +128,7 @@ function TaskPage({
           />
         </div>
 
-        <h1>Please write an image description for a blind or low vision audience.</h1>
+        <h1>Please write an image description for blind or low vision users.</h1>
       </div>
 
       <div className="task-main">
@@ -142,7 +142,7 @@ function TaskPage({
               />
             </div>
             <p className="image-note">
-              Please focus on describing the image for a blind or low vision audience.
+              Please focus on describing the image for blind or low vision users.
             </p>
           </div>
         </div>

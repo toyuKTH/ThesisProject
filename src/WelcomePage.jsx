@@ -2,8 +2,12 @@ import "./WelcomePage.css";
 function WelcomePage({ onStart }) {
     return (
         <div className="welcome-page">
-            <h1>Image Description Writing Study for BLV Users</h1>
-            <p>In this study, you will be asked to write image descriptions for a person who cannot see the image. Some tasks may include brief AI feedback. Please click the button below to begin.</p>
+            <h1>Image Description Writing Study for <br></br>Blind and Low Vision Accessibility</h1>
+            <p>Welcome to this research study.
+
+                The purpose of this study is to explore how people experience writing image descriptions for blind or low vision users, with and without AI assistance. During the study, you will complete a series of image description tasks, answer short post task questionnaires, and take part in a brief follow up interview.
+
+                Your participation is voluntary. By clicking the button below to begin, you indicate that you have read the study information provided by the researcher and consent to participate in this study.</p>
             <button
                 className="navigate-button"
                 onClick={() => {
