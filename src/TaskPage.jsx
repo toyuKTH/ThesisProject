@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import './TaskPage.css';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 function TaskPage({
   participantInfo,
   task,
@@ -14,6 +16,7 @@ function TaskPage({
   const [hasUsedAI, setHasUsedAI] = useState(false);
   const [initialDescriptionBeforeAI, setInitialDescriptionBeforeAI] = useState('');
   const [aiRequestedAt, setAiRequestedAt] = useState(null);
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
 
   useEffect(() => {
     setDescription('');
@@ -21,6 +24,7 @@ function TaskPage({
     setHasUsedAI(false);
     setInitialDescriptionBeforeAI('');
     setAiRequestedAt(null);
+    setIsLoadingAI(false);
   }, [task]);
 
   if (!task) {
@@ -34,21 +38,49 @@ function TaskPage({
     ? 'AI-assisted writing'
     : 'Writing only';
 
-  const handleGetAIFeedback = () => {
-    if (hasUsedAI) return;
+  const handleGetAIFeedback = async () => {
+    if (hasUsedAI || isLoadingAI) return;
 
     if (!description.trim()) {
       alert('Please write an initial description before getting AI feedback.');
       return;
     }
 
-    const fakeFeedback =
-      'Try to clearly describe the main scene first, then mention important visual details such as the setting, notable objects, and any striking colors or spatial relationships. Focus on what would be most useful for a blind or low vision audience.';
+    if (!API_BASE_URL) {
+      alert('API base URL is missing. Please check your environment settings.');
+      return;
+    }
 
-    setInitialDescriptionBeforeAI(description);
-    setAiFeedback(fakeFeedback);
-    setHasUsedAI(true);
-    setAiRequestedAt(new Date().toISOString());
+    try {
+      setIsLoadingAI(true);
+
+      const response = await fetch(`${API_BASE_URL}/api/feedback`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          description,
+          category: task.category,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to get AI feedback.');
+      }
+
+      setInitialDescriptionBeforeAI(description);
+      setAiFeedback(data.feedback);
+      setHasUsedAI(true);
+      setAiRequestedAt(new Date().toISOString());
+    } catch (error) {
+      console.error(error);
+      alert('Failed to get AI feedback. Please try again.');
+    } finally {
+      setIsLoadingAI(false);
+    }
   };
 
   const handleSubmit = () => {
@@ -133,9 +165,9 @@ function TaskPage({
               <button
                 className="secondary-button"
                 onClick={handleGetAIFeedback}
-                disabled={hasUsedAI}
+                disabled={hasUsedAI || isLoadingAI}
               >
-                Get AI Feedback
+                {isLoadingAI ? 'Generating Feedback...' : 'Get AI Feedback'}
               </button>
 
               {aiFeedback && (
@@ -154,7 +186,7 @@ function TaskPage({
                 </>
               )}
 
-              {!aiFeedback && (
+              {!aiFeedback && !isLoadingAI && (
                 <p className="ai-once-note">
                   AI feedback can only be requested once for this task.
                 </p>
