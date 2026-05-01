@@ -95,3 +95,18 @@ body {
   border-top: 1px solid #ece9e4;
   margin: 8px 0 24px;
 }
+
+.question-note {
+  margin: -2px 0 10px;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #777;
+}
+
+.participant-title {
+  white-space: nowrap;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 24px;
+}

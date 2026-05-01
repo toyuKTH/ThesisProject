@@ -40,18 +40,29 @@
 }
 
 .finished-button {
-  margin-top: 18px;
-  min-width: 240px;
-  height: 54px;
+  display: block;
+  margin: 32px auto 0;
+  min-width: 260px;
+  height: 56px;
+  padding: 0 32px;
   border: none;
-  border-radius: 12px;
-  background: linear-gradient(90deg, #1f73dc, #2f86f0);
+  border-radius: 14px;
+  background: #2f80ed;
   color: #ffffff;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 600;
   cursor: pointer;
+  box-shadow: 0 6px 16px rgba(47, 128, 237, 0.22);
+  transition: all 0.18s ease;
 }
 
 .finished-button:hover {
-  opacity: 0.95;
+  background: #1f6fd1;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(47, 128, 237, 0.28);
+}
+
+.finished-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(47, 128, 237, 0.2);
 }

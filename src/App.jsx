@@ -3,6 +3,7 @@ import TaskPage from './TaskPage';
 import Participant from './Participant';
 import WorkloadPage from './WorkloadPage';
 import { useState } from 'react';
+import './App.css';
 
 import P1 from './assets/images/P1.jpg';
 import P2 from './assets/images/P2.jpg';
@@ -26,6 +27,16 @@ const IMAGE_POOL = {
   ],
 };
 
+function generateParticipantID() {
+  const timePart = Date.now().toString(36);
+  const randomPart = Math.random().toString(36).slice(2, 6);
+  return `P${timePart}${randomPart}`.toUpperCase();
+}
+
+function generateStartingCondition() {
+  return Math.random() < 0.5 ? 'AI' : 'nonAI';
+}
+
 function shuffleArray(array) {
   const newArray = [...array];
   for (let i = newArray.length - 1; i > 0; i -= 1) {
@@ -35,14 +46,7 @@ function shuffleArray(array) {
   return newArray;
 }
 
-function getStartingCondition(participantID) {
-  const idNum = Number(participantID) || 0;
-  return idNum % 2 === 1 ? 'AI' : 'nonAI';
-}
-
-function generateTaskOrder(participantID) {
-  const startingCondition = getStartingCondition(participantID);
-
+function generateTaskOrder(startingCondition) {
   const alternatingConditions =
     startingCondition === 'AI'
       ? ['AI', 'nonAI', 'AI', 'nonAI', 'AI', 'nonAI']
@@ -112,11 +116,29 @@ function App() {
     workloadResponses: [],
   });
 
+  const resetStudyData = () => {
+    setStudyData({
+      participantInfo: null,
+      taskOrder: [],
+      taskResponses: [],
+      workloadResponses: [],
+    });
+    setCurrentTaskIndex(0);
+  };
+
   const handleParticipantSubmit = (formData) => {
-    const generatedTaskOrder = generateTaskOrder(formData.participantID);
+    const participantID = generateParticipantID();
+    const startingCondition = generateStartingCondition();
+    const generatedTaskOrder = generateTaskOrder(startingCondition);
+
+    const participantInfoWithID = {
+      participantID,
+      startingCondition,
+      ...formData,
+    };
 
     setStudyData({
-      participantInfo: formData,
+      participantInfo: participantInfoWithID,
       taskOrder: generatedTaskOrder,
       taskResponses: [],
       workloadResponses: [],
@@ -124,6 +146,11 @@ function App() {
 
     setCurrentTaskIndex(0);
     setCurrentPage('task');
+  };
+
+  const handleScreeningFail = () => {
+    resetStudyData();
+    setCurrentPage('notEligible');
   };
 
   const handleTaskSubmit = (taskResponse) => {
@@ -162,13 +189,17 @@ function App() {
       {currentPage === 'welcome' && (
         <WelcomePage
           onStart={() => {
+            resetStudyData();
             setCurrentPage('participant');
           }}
         />
       )}
 
       {currentPage === 'participant' && (
-        <Participant onSubmit={handleParticipantSubmit} />
+        <Participant
+          onSubmit={handleParticipantSubmit}
+          onIneligible={handleScreeningFail}
+        />
       )}
 
       {currentPage === 'task' && studyData.taskOrder.length > 0 && (
@@ -192,24 +223,43 @@ function App() {
         />
       )}
 
+      {currentPage === 'notEligible' && (
+        <div className="welcome-page">
+          <h1>Thank you for your interest</h1>
+
+          <p>
+            Thank you for taking the time to answer these questions. This study is currently looking for participants who are comfortable writing in English and have some experience creating or publishing digital content that includes images. Based on your responses, this study may not be the best fit at this stage. Thank you again for your time and interest.
+          </p>
+
+          <button
+            className="navigate-button"
+            onClick={() => {
+              resetStudyData();
+              setCurrentPage('welcome');
+            }}
+          >
+            Back to Welcome Page
+          </button>
+        </div>
+      )}
+
       {currentPage === 'finished' && (
-        <div className="finished-page">
-          <div className="finished-card">
-            <p className="finished-step">Study completed</p>
-            <h1>Thank you for your participation</h1>
-            <p className="finished-text">
-              Your responses have been downloaded as a JSON file.
-            </p>
-            <p className="finished-text">
-              Please save the file and send it to the researcher as instructed.
-            </p>
-            <button
-              className="finished-button"
-              onClick={() => setCurrentPage('welcome')}
-            >
-              Back to Welcome Page
-            </button>
-          </div>
+        <div className="welcome-page">
+          <h1>Thank you for your participation</h1>
+
+          <p>
+            Your responses have been downloaded as a JSON file. Please save the file and send it to the researcher as instructed.
+          </p>
+
+          <button
+            className="navigate-button"
+            onClick={() => {
+              resetStudyData();
+              setCurrentPage('welcome');
+            }}
+          >
+            Back to Welcome Page
+          </button>
         </div>
       )}
     </div>
