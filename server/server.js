@@ -8,6 +8,8 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3001;
 
+const MODEL_ID = 'gemini-3.1-flash-lite-preview';
+
 app.use(
   cors({
     origin: '*',
@@ -63,6 +65,8 @@ app.get('/api/health', (req, res) => {
   res.json({
     ok: true,
     message: 'Gemini feedback server is running',
+    model: MODEL_ID,
+    time: new Date().toISOString(),
   });
 });
 
@@ -84,30 +88,37 @@ app.post('/api/feedback', async (req, res) => {
     const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.1-flash-lite-preview',
+      model: MODEL_ID,
       contents: fullPrompt,
     });
 
     const feedback = response.text?.trim();
 
     if (!feedback) {
-      console.error('No text returned from Gemini:', response);
+      console.error('No text returned from Gemini:');
+      console.error(response);
+
       return res.status(500).json({
         error: 'No feedback returned from model.',
       });
     }
 
-    return res.json({ feedback });
+    return res.json({
+      feedback,
+      model: MODEL_ID,
+    });
   } catch (error) {
     console.error('Gemini API full error:');
     console.error(error);
 
     return res.status(500).json({
       error: error?.message || 'Failed to generate feedback.',
+      model: MODEL_ID,
     });
   }
 });
 
 app.listen(port, () => {
   console.log(`Gemini feedback server running at http://localhost:${port}`);
+  console.log(`Using model: ${MODEL_ID}`);
 });
