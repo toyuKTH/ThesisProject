@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import './WorkloadPage.css';
 
 function WorkloadPage({
@@ -12,12 +12,18 @@ function WorkloadPage({
   const [temporalDemand, setTemporalDemand] = useState('');
   const [effort, setEffort] = useState('');
   const [frustration, setFrustration] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const submitInProgressRef = useRef(false);
 
   useEffect(() => {
     setMentalDemand('');
     setTemporalDemand('');
     setEffort('');
     setFrustration('');
+    setIsSubmitting(false);
+
+    submitInProgressRef.current = false;
   }, [task]);
 
   if (!task) {
@@ -25,6 +31,8 @@ function WorkloadPage({
   }
 
   const handleSubmit = () => {
+    if (submitInProgressRef.current || isSubmitting) return;
+
     if (
       mentalDemand === '' ||
       temporalDemand === '' ||
@@ -35,9 +43,13 @@ function WorkloadPage({
       return;
     }
 
+    submitInProgressRef.current = true;
+    setIsSubmitting(true);
+
     const workloadResponse = {
       participantID: participantInfo?.participantID,
       taskId: task.id,
+      taskNumber: currentTaskIndex + 1,
       condition: task.condition,
       category: task.category,
       imageId: task.imageId,
@@ -64,6 +76,7 @@ function WorkloadPage({
                 value={num}
                 checked={value === String(num)}
                 onChange={(e) => setter(e.target.value)}
+                disabled={isSubmitting}
               />
               <span>{num}</span>
             </label>
@@ -80,7 +93,9 @@ function WorkloadPage({
           <p className="workload-step">
             Task {currentTaskIndex + 1} of {totalTasks}
           </p>
+
           <h1>Task Workload Questionnaire</h1>
+
           <p className="workload-subtitle">
             Please rate the task you just completed.
           </p>
@@ -127,8 +142,12 @@ function WorkloadPage({
         </div>
 
         <div className="workload-actions">
-          <button className="workload-button" onClick={handleSubmit}>
-            Submit and Continue
+          <button
+            className="workload-button"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit and Continue'}
           </button>
         </div>
       </div>

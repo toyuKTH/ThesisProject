@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import './TaskPage.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -16,7 +16,12 @@ function TaskPage({
   const [hasUsedAI, setHasUsedAI] = useState(false);
   const [initialDescriptionBeforeAI, setInitialDescriptionBeforeAI] = useState('');
   const [aiRequestedAt, setAiRequestedAt] = useState(null);
+  const [aiReceivedAt, setAiReceivedAt] = useState(null);
+  const [taskStartedAt, setTaskStartedAt] = useState(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
+
+  const aiRequestInProgressRef = useRef(false);
+  const taskSubmitInProgressRef = useRef(false);
 
   useEffect(() => {
     setDescription('');
@@ -24,7 +29,12 @@ function TaskPage({
     setHasUsedAI(false);
     setInitialDescriptionBeforeAI('');
     setAiRequestedAt(null);
+    setAiReceivedAt(null);
+    setTaskStartedAt(new Date().toISOString());
     setIsLoadingAI(false);
+
+    aiRequestInProgressRef.current = false;
+    taskSubmitInProgressRef.current = false;
   }, [task]);
 
   if (!task) {
@@ -38,8 +48,19 @@ function TaskPage({
     ? 'AI-assisted writing'
     : 'Writing only';
 
+  const getDurationInSeconds = (startTime, endTime) => {
+    if (!startTime || !endTime) return null;
+
+    const start = new Date(startTime).getTime();
+    const end = new Date(endTime).getTime();
+
+    if (Number.isNaN(start) || Number.isNaN(end)) return null;
+
+    return Math.round((end - start) / 1000);
+  };
+
   const handleGetAIFeedback = async () => {
-    if (hasUsedAI || isLoadingAI) return;
+    if (hasUsedAI || isLoadingAI || aiRequestInProgressRef.current) return;
 
     if (!description.trim()) {
       alert('Please write an initial description before getting AI feedback.');
@@ -51,9 +72,14 @@ function TaskPage({
       return;
     }
 
-    try {
-      setIsLoadingAI(true);
+    const requestTime = new Date().toISOString();
 
+    aiRequestInProgressRef.current = true;
+    setIsLoadingAI(true);
+    setAiRequestedAt(requestTime);
+    setInitialDescriptionBeforeAI(description);
+
+    try {
       const response = await fetch(`${API_BASE_URL}/api/feedback`, {
         method: 'POST',
         headers: {
@@ -65,25 +91,44 @@ function TaskPage({
         }),
       });
 
-      const data = await response.json();
+      let data = null;
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to get AI feedback.');
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
       }
 
-      setInitialDescriptionBeforeAI(description);
+      if (!response.ok) {
+        throw new Error(data?.error || 'Failed to get AI feedback.');
+      }
+
+      if (!data?.feedback) {
+        throw new Error('AI feedback was empty.');
+      }
+
+      const receivedTime = new Date().toISOString();
+
       setAiFeedback(data.feedback);
       setHasUsedAI(true);
-      setAiRequestedAt(new Date().toISOString());
+      setAiReceivedAt(receivedTime);
     } catch (error) {
       console.error(error);
-      alert('Failed to get AI feedback. Please try again.');
+
+      setAiRequestedAt(null);
+      setInitialDescriptionBeforeAI('');
+      setAiReceivedAt(null);
+
+      alert('AI feedback could not be generated. Please try once more.');
     } finally {
+      aiRequestInProgressRef.current = false;
       setIsLoadingAI(false);
     }
   };
 
   const handleSubmit = () => {
+    if (taskSubmitInProgressRef.current) return;
+
     if (!description.trim()) {
       alert('Please write a description before continuing.');
       return;
@@ -94,20 +139,53 @@ function TaskPage({
       return;
     }
 
+    taskSubmitInProgressRef.current = true;
+
+    const submittedAt = new Date().toISOString();
+
+    const initialText = initialDescriptionBeforeAI.trim();
+    const finalText = description.trim();
+
     const response = {
       participantID: participantInfo?.participantID,
       taskId: task.id,
+      taskNumber: currentTaskIndex + 1,
       condition: task.condition,
       category: task.category,
       imageId: task.imageId,
       imageLabel: task.imageLabel,
+
       responseText: description,
-      usedAI: hasUsedAI,
-      aiFeedback,
-      initialDescriptionBeforeAI: isAITask ? initialDescriptionBeforeAI : null,
-      finalDescriptionAfterAI: isAITask ? description : null,
-      aiRequestedAt: isAITask ? aiRequestedAt : null,
-      timestamp: new Date().toISOString(),
+
+      log: {
+        taskStartedAt,
+        taskSubmittedAt: submittedAt,
+        taskDurationSeconds: getDurationInSeconds(taskStartedAt, submittedAt),
+
+        usedAI: hasUsedAI,
+        aiRequestedAt: isAITask ? aiRequestedAt : null,
+        aiReceivedAt: isAITask ? aiReceivedAt : null,
+        aiResponseDurationSeconds: isAITask
+          ? getDurationInSeconds(aiRequestedAt, aiReceivedAt)
+          : null,
+
+        initialDescriptionBeforeAI: isAITask ? initialDescriptionBeforeAI : null,
+        finalDescriptionAfterAI: isAITask ? description : null,
+        revisedAfterAI: isAITask && hasUsedAI
+          ? initialText !== finalText
+          : null,
+
+        initialDescriptionLength: isAITask && hasUsedAI
+          ? initialText.length
+          : null,
+        finalDescriptionLength: finalText.length,
+        finalWordCount: finalText
+          ? finalText.split(/\s+/).length
+          : 0,
+      },
+
+      aiFeedback: isAITask ? aiFeedback : null,
+      timestamp: submittedAt,
     };
 
     onSubmitTask(response);
@@ -169,6 +247,12 @@ function TaskPage({
               >
                 {isLoadingAI ? 'Generating Feedback...' : 'Get AI Feedback'}
               </button>
+
+              {isLoadingAI && (
+                <p className="ai-once-note">
+                  Please wait while the AI feedback is being generated.
+                </p>
+              )}
 
               {aiFeedback && (
                 <>
